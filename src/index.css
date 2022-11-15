@@ -11,3 +11,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.Table{
+  margin-left: 40%;
+  margin-right: auto;
+  display:inline-block;
+}
