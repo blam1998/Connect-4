@@ -7,12 +7,16 @@ import {Table} from './Table';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App />
+  <div className = "View">
+    <div className = "Chat-Room">
+      <App />
+    </div>
+    <React.StrictMode>
     <div className = "Table">
       <Table />
     </div>
-  </React.StrictMode>
+    </React.StrictMode>
+  </div>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -16,10 +16,9 @@ const io = new Server(server,{
 })
 
 io.on("connection", (socket) => {
-    const myRoom = "3";
     socket.on("send_message", (data) => {
-        socket.to(data.room).emit("receive_message", data)
-        console.log(myRoom);
+        socket.in(data.room).emit("receive_message", data); //to everyone in room
+        socket.emit("receive_message", data); //to self
     });
 
     socket.on("send_room", (data) =>{

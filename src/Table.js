@@ -8,9 +8,9 @@ function GenerateTable(props){
         <table>
             <tbody>
             {props.TableDimensions.map((rElement, rIndex) => {
-                return(<tr className = {"row" + (rIndex + 1).toString()} key = {"r" + (rIndex)}>
+                return(<tr className = {"row" + (rIndex + 1).toString()} key = {rIndex.toString()}>
                     {rElement.map((cElement, cIndex) => {
-                        return (<td className = {"column" + (cIndex + 1).toString()} key = {"c" + cIndex}></td>)
+                        return (<td className = {"column" + (cIndex + 1).toString()} key = {cIndex.toString()}></td>)
                     })}
                 </tr>)
             })}

@@ -12,9 +12,14 @@ code {
     monospace;
 }
 
+.View{
+  display: inline-flex;
+  overflow-wrap: nowrap;
+}
+
 
 .Table{
-  margin-left: 40%;
+  margin-left: auto;
   margin-right: auto;
   display:inline-block;
 }

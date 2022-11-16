@@ -1,5 +1,53 @@
 .App {
+  width: 100%;
+  height: 750px;
   text-align: center;
 }
 
+.Chat-Sidebar{
+  position: absolute;
+  width: 30%;
+  height: 600px;
+  padding: 0px 15px 0px 15px;
+  overflow-y: none;
+  margin-left: 15px;
+  right: 10px;
+  bottom: 10px;
+  background-color: rgba(0,0,0,0.4);
+}
 
+.Chat-Box{
+  height:50vh;
+  padding-right: 15px;
+  padding-bottom: 15px;
+  overflow: auto;
+  width: 95%;
+  background-color: white;
+}
+
+.Chat-Title{
+  text-align: left;
+  margin-bottom: 0px;
+}
+
+.Chat-Msg{
+  text-align: left;
+  display:block;
+}
+
+.Chat-Query-Box{
+  display: flex;
+  padding-top: 2px;
+  overflow-wrap: nowrap;
+  width: 95%;
+  height: 25px;
+}
+
+.Type-Msg{
+  width: 90%;
+  height: inherit;
+}
+
+.Msg-Button{
+  height: 25px;
+}
