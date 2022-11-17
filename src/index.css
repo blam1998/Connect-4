@@ -13,13 +13,21 @@ code {
 }
 
 .View{
-  display: inline-flex;
-  overflow-wrap: nowrap;
+  width: 100%;
+  height: 100vh;
+}
+
+.Main-Interface{
+  display: flex;
+  align-items: flex-end;
+  justify-content:space-between;
 }
 
 
 .Table{
-  margin-left: auto;
-  margin-right: auto;
-  display:inline-block;
+  width: 70%;
+}
+
+.Chat-Room{
+  width: 20%;
 }

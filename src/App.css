@@ -1,26 +1,20 @@
 .App {
   width: 100%;
-  height: 750px;
   text-align: center;
 }
 
 .Chat-Sidebar{
-  position: absolute;
-  width: 30%;
-  height: 600px;
-  padding: 0px 15px 0px 15px;
+  width: 100%;
+  padding-bottom: 2em;
+  padding: 0 1em;
   overflow-y: none;
-  margin-left: 15px;
-  right: 10px;
-  bottom: 10px;
   background-color: rgba(0,0,0,0.4);
 }
 
 .Chat-Box{
   height:50vh;
-  padding-right: 15px;
-  padding-bottom: 15px;
   overflow: auto;
+  margin: 0;
   width: 95%;
   background-color: white;
 }
@@ -32,20 +26,18 @@
 
 .Chat-Msg{
   text-align: left;
-  display:block;
+  display: block;
 }
 
 .Chat-Query-Box{
   display: flex;
-  padding-top: 2px;
-  overflow-wrap: nowrap;
+  padding-top: 0.25em;
   width: 95%;
-  height: 25px;
+  justify-content: space-between;
 }
 
 .Type-Msg{
-  width: 90%;
-  height: inherit;
+  width: 80%;
 }
 
 .Msg-Button{

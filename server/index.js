@@ -24,7 +24,12 @@ io.on("connection", (socket) => {
     socket.on("send_room", (data) =>{
         socket.rooms.clear();
         socket.join(data.room);
+        socket.emit("receive_room", data)
     });
+
+    socket.on("send_userName", (data) => {
+        socket.emit("receive_userName", (data));
+    })
 })
 
 server.listen(3001, () => {

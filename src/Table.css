@@ -1,13 +1,17 @@
+table{
+    width: 100%;
+    padding-left: 2em;
+}
 
 .Table-Div{
+    width: 100%;
 }
 
 td {
-    padding: 10px 10px 10px 10px;
     border: 1px solid black;
     background-color: white;
-    width: 10px;
-    height: 10px;
+    width: 14%;
+    height: 5em;
 }
 
 

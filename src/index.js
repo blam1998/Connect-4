@@ -1,21 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import {App} from './App';
 import reportWebVitals from './reportWebVitals';
 import {Table} from './Table';
+import {Nav} from './Nav';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <div className = "View">
-    <div className = "Chat-Room">
-      <App />
+    <div className = "User-Info">
+      <Nav />
     </div>
-    <React.StrictMode>
-    <div className = "Table">
-      <Table />
+    
+    <div className = "Main-Interface">
+      <div className = "Table">
+        <Table />
+      </div>
+      <div className = "Chat-Room">
+        <App />
+      </div>
     </div>
-    </React.StrictMode>
   </div>
 );
 
