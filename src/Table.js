@@ -1,6 +1,8 @@
 import './Table.css';
 import {Component} from 'react';
-
+import { socket } from './App';
+import { useEffect, useState } from 'react';
+const io = require('socket.io-client');
 
 
 function Squares(props){
@@ -16,31 +18,66 @@ class Table extends Component{
         super(props);
         this.state = {
             table : Array.from(Array(6), () => new Array(7).fill(null)),
-            xIsNext : true,
+            myTurn: false,
+            myName: "",
+            myId: "",
             hasWinner: false,
+            gameStart: false,
+            gameRoom: new Map()
         };
         this.handleClick = this.handleClick.bind(this);
         this.renderSquare = this.renderSquare.bind(this);
+        this.gameStartClick = this.gameStartClick.bind(this);
     }
 
-    handleClick(row,column){
-        //If tile is already taken, ignore click.
-        if (this.state.hasWinner){
+    componentDidMount(){
+        socket.on("receive_userName",(data) => {
+            var temp = new Map([this.state.gameRoom]? this.state.gameRoom : null);
+            var temp2 = new Map();
+            temp2.set(data.id, data.name);
+            console.log(temp2);
+            var finalMap = new Map([...temp].concat([...temp2]));
+            this.setState(
+            {
+                gameRoom : finalMap,
+                myName : data.name,
+                myId: data.id,
+            })
+            console.log(finalMap);
+        })
+    }
+
+    gameStartClick(){
+        console.log(this.state.gameRoom.size);
+        console.log("Hi");
+        if (this.state.gameRoom.size < 2 || this.state.gameStart){
             return;
         }
 
+        
+        this.setState({gameStart : !this.state.gameStart})
+    }
+    
+    handleClick(row,column){
+        //If game has a winner, ignore click. OR game hasn't started.
+        if (this.state.hasWinner || !this.state.gameStart){
+            return;
+        }
+        //If tile is already taken, ignore click.
         if (this.state.table[row][column] != null){
             return;
         }
-        if (row + 1 < 6 && this.state.table[row + 1][column] === null){
-            return;
+
+        //If tiles below is empty, put the tile at the lowest possible block.
+        while (row + 1 < 6 && this.state.table[row + 1][column] === null){
+            row++
         }
 
         const tempTable = this.state.table.slice();
         tempTable[row][column] = this.state.xIsNext? "X" : "O";
         
         if (calculateWinner(tempTable, row, column)) {
-            console.log(calculateWinner(tempTable, row, column) + " Wins");
+            console.log( this.state.playerName + " Wins");
             this.setState({ hasWinner : !this.state.hasWinner});
         }
 
@@ -58,8 +95,10 @@ class Table extends Component{
     }
 
     render(){
+
         return(
             <div className = "Game-Table">
+                <div className = "Start-Sign" onClick = {() => this.gameStartClick()}> Start </div>
                 {this.state.table.map((rElement, rIndex) => {
                     return(
                         <div className = "row">

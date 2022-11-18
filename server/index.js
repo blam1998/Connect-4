@@ -16,6 +16,9 @@ const io = new Server(server,{
 })
 
 io.on("connection", (socket) => {
+
+    var myRoom = "";
+
     socket.on("send_message", (data) => {
         socket.in(data.room).emit("receive_message", data); //to everyone in room
         socket.emit("receive_message", data); //to self
@@ -25,10 +28,14 @@ io.on("connection", (socket) => {
         socket.rooms.clear();
         socket.join(data.room);
         socket.emit("receive_room", data)
+        myRoom = data.room;
     });
 
     socket.on("send_userName", (data) => {
-        socket.emit("receive_userName", (data));
+        const id = socket.id;
+        const name = data.name
+        socket.emit("receive_userName", {name, id});
+        socket.in(myRoom).emit("receive_userName", {name, id});
     })
 })
 

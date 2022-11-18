@@ -3,27 +3,10 @@ table{
     padding-left: 2em;
 }
 
-/*
-.Table-Div{
-    width: 100%;
-}
-
-td {
-    border: 1px solid black;
-    background-color: white;
-    width: 14%;
-    height: 5em;
-}
-
-
-td:hover{
-    background-color: rgba(0,0,0,0.4);
-}
-
-*/
-
 .Game-Table{
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .row {
@@ -37,7 +20,12 @@ td:hover{
     text-align: center;
 }
 
-.square:hover{
+.square:hover, .Start-Sign:hover{
     background-color: rgba(0,0,0,0.4);
     cursor: pointer;
+}
+
+.Start-Sign{
+    border: 2px solid black;
+    max-width: fit-content;
 }
