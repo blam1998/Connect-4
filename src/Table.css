@@ -3,6 +3,7 @@ table{
     padding-left: 2em;
 }
 
+/*
 .Table-Div{
     width: 100%;
 }
@@ -19,4 +20,24 @@ td:hover{
     background-color: rgba(0,0,0,0.4);
 }
 
+*/
 
+.Game-Table{
+    margin: 0 auto;
+}
+
+.row {
+    display: flex;
+}
+
+.square{
+    border: 1px solid black;
+    width: 5em;
+    height: 5em;
+    text-align: center;
+}
+
+.square:hover{
+    background-color: rgba(0,0,0,0.4);
+    cursor: pointer;
+}
