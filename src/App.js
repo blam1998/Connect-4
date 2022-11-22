@@ -10,26 +10,32 @@ function App() {
   const [message, setMessage] = useState([""]);
   const [messageReceived, SetMessageReceived] = useState([]);
   const [room, SetRoom] = useState("");
-  const [userName, SetUserName] = useState("");
+  const [userName, setUserName] = useState("?");
 
   const sendMessage = () => {
-    socket.emit("send_message", {message, room})
+    var name = userName;
+    socket.emit("send_message", {userName, message, room})
   };
 
   useEffect(() => {
     socket.on("receive_message", (data) => {
       SetMessageReceived(messageReceived => [
         ...messageReceived,
-        {id: msgId++, message: data.message}
+        {name: data.userName, id: msgId++, message: data.message}
       ]);
+    });
+
+    socket.on("receive_userName", (data) => {
+      setUserName(data.name);
+      console.log(userName);
     });
 
     socket.on("receive_room", (data) => {
       SetRoom(data.room);
     });
 
-    socket.on("receive_userName", (data) => {
-      SetUserName(data.name);
+    socket.on("enter_name", () => {
+      alert("Please pick a user name.");
     });
 
   }, [socket])
@@ -41,7 +47,7 @@ function App() {
         <h1 className = "Chat-Title">Room {room}</h1>
         <div className = "Chat-Box">
           <ul>
-            {messageReceived.map(element => (<span key = {element.id} id = {element.id} className = "Chat-Msg"> {userName + ": " + element.message} </span>))}
+            {messageReceived.map(element => (<span key = {element.id} id = {element.id} className = "Chat-Msg"> {element.name + ": " + element.message} </span>))}
           </ul>
         </div> 
         <div className = "Chat-Query-Box">

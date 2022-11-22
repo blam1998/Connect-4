@@ -21,8 +21,8 @@ class Table extends Component{
             myTurn: false,
             myName: "",
             myId: "",
+            myRoom: "",
             hasWinner: false,
-            gameStart: false,
             gameRoom: new Map()
         };
         this.handleClick = this.handleClick.bind(this);
@@ -31,31 +31,33 @@ class Table extends Component{
     }
 
     componentDidMount(){
-        socket.on("receive_userName",(data) => {
-            var temp = new Map([this.state.gameRoom]? this.state.gameRoom : null);
-            var temp2 = new Map();
-            temp2.set(data.id, data.name);
-            console.log(temp2);
-            var finalMap = new Map([...temp].concat([...temp2]));
-            this.setState(
-            {
-                gameRoom : finalMap,
+        socket.on("receive_userName", (data) => {
+            this.setState({
                 myName : data.name,
-                myId: data.id,
-            })
-            console.log(finalMap);
-        })
+                myId : data.id
+            });
+        });
+
+        socket.on("receive_room", (data) => {
+            this.setState({myRoom : data.room})
+        });
     }
 
     gameStartClick(){
-        console.log(this.state.gameRoom.size);
-        console.log("Hi");
-        if (this.state.gameRoom.size < 2 || this.state.gameStart){
+        const id = this.state.myId;
+        const room = this.state.myRoom;
+
+        if (this.state.gameRoom.size < 2 || !this.state.hasWinner){
             return;
         }
 
-        
-        this.setState({gameStart : !this.state.gameStart})
+        this.setState({
+            myTurn: false,
+            hasWinner: false,
+            table : Array.from(Array(6), () => new Array(7).fill(null)),
+        })
+
+        socket.emit("send_gameStart", {id, room});
     }
     
     handleClick(row,column){

@@ -5,15 +5,17 @@ import { socket } from './App';
 
 
 function Nav(){
-    const [userName, setUserName] = useState("Anonymous");
+    const [userName, setUserName] = useState("");
     const [room, setRoomId] = useState("");
 
+
     const sendRoom = () => {
-        socket.emit("send_room",{room});
-    };
+        socket.emit("send_room", {room});
+    }
 
     useEffect(() => {
-    },[socket])
+        socket.emit("send_userName", {userName});
+    },[userName])
 
     return(
         <div className = "Navbar">
@@ -24,7 +26,6 @@ function Nav(){
                     <button onClick = {() => {
                         let name = document.getElementById("UserName").value;
                         setUserName(name);
-                        socket.emit("send_userName",{name});
                         }}>Send</button>
                 </div>
                 <div className = "Room-Input">

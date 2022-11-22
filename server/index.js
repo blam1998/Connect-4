@@ -15,28 +15,42 @@ const io = new Server(server,{
     },
 })
 
+const myRooms = new Map();
+
 io.on("connection", (socket) => {
 
-    var myRoom = "";
-
     socket.on("send_message", (data) => {
+        if (!data.userName){
+            socket.emit("enter_name");
+            return;
+        }
+
         socket.in(data.room).emit("receive_message", data); //to everyone in room
         socket.emit("receive_message", data); //to self
     });
 
-    socket.on("send_room", (data) =>{
+    socket.on("send_room", (data) => {
+        const room = data.room;
         socket.rooms.clear();
         socket.join(data.room);
-        socket.emit("receive_room", data)
-        myRoom = data.room;
-    });
+        socket.emit("receive_room", {room})
+    })
 
     socket.on("send_userName", (data) => {
         const id = socket.id;
-        const name = data.name
-        socket.emit("receive_userName", {name, id});
-        socket.in(myRoom).emit("receive_userName", {name, id});
+        const name = data.userName;
+        console.log(name);
+        socket.emit("receive_userName", {name, id})
     })
+
+    socket.on("send_leaveRoom", (data) => {
+        socket.leave(data.room);
+    });
+
+
+    socket.on("send_gameStart", (data) => {
+        
+    });
 })
 
 server.listen(3001, () => {
