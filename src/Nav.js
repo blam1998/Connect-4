@@ -17,6 +17,17 @@ function Nav(){
         socket.emit("send_userName", {userName});
     },[userName])
 
+    useEffect(() => {
+        socket.on("room_full", (data) => {
+            alert("Room " + data.room + " is full.");
+        });
+
+        socket.on("receive_room", (data) => {
+            setRoomId(data.room);
+          });
+
+    }, [socket])
+
     return(
         <div className = "Navbar">
             <h1 className = "Navbar-Name">{userName}</h1>

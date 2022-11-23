@@ -13,7 +13,6 @@ function App() {
   const [userName, setUserName] = useState("?");
 
   const sendMessage = () => {
-    var name = userName;
     socket.emit("send_message", {userName, message, room})
   };
 
@@ -36,6 +35,10 @@ function App() {
 
     socket.on("enter_name", () => {
       alert("Please pick a user name.");
+    });
+
+    socket.on("clear_chat", () => {
+      SetMessageReceived(messageReceive => []);
     });
 
   }, [socket])
