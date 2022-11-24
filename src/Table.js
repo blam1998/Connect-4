@@ -19,11 +19,11 @@ class Table extends Component{
         this.state = {
             table : Array.from(Array(6), () => new Array(7).fill(null)),
             myTurn: false,
+            xIsNext: true,
             myName: "",
             myId: "",
             myRoom: "",
-            hasWinner: false,
-            gameRoom: new Map()
+            winner: "",
         };
         this.handleClick = this.handleClick.bind(this);
         this.renderSquare = this.renderSquare.bind(this);
@@ -41,28 +41,65 @@ class Table extends Component{
         socket.on("receive_room", (data) => {
             this.setState({myRoom : data.room})
         });
+
+        socket.on("receive_gameStart", () => {
+            document.getElementById("Wait-Sign").style.display = "block";
+        });
+
+        socket.on("gameStart", (playerId) => {
+            document.getElementById("Wait-Sign").style.display = "none";
+            document.getElementById("Start-Sign").style.display = "none";
+
+            if (this.state.myId === playerId){
+                this.setState({
+                    myTurn: !this.state.myTurn,
+                });
+            }
+        });
+
+        socket.on("receiveTurn", (data) => {
+            /*
+            Data:
+                Other Player: id, name.
+                table,
+                xIsNext,
+                room,
+                winner,
+            */
+           if (this.state.myId === data.id && data.winner === null){
+                return;
+           }
+
+           if (data.winner !== null){
+                document.getElementById("Win-Message").style.display = "block";
+           }
+
+            this.setState({
+                table : data.table,
+                myTurn: !this.state.myTurn,
+                xIsNext: data.xIsNext,
+                winner: data.winner,
+            });
+        });
     }
 
     gameStartClick(){
         const id = this.state.myId;
         const room = this.state.myRoom;
 
-        if (this.state.gameRoom.size < 2 || !this.state.hasWinner){
-            return;
-        }
-
         this.setState({
             myTurn: false,
             hasWinner: false,
             table : Array.from(Array(6), () => new Array(7).fill(null)),
+            xIsNext: true,
         })
 
         socket.emit("send_gameStart", {id, room});
     }
     
     handleClick(row,column){
-        //If game has a winner, ignore click. OR game hasn't started.
-        if (this.state.hasWinner || !this.state.gameStart){
+        //If game has a winner, ignore click. OR game hasn't started. OR it's not my turn.
+        if (this.state.winner || !this.state.myTurn){
             return;
         }
         //If tile is already taken, ignore click.
@@ -78,14 +115,20 @@ class Table extends Component{
         const tempTable = this.state.table.slice();
         tempTable[row][column] = this.state.xIsNext? "X" : "O";
         
-        if (calculateWinner(tempTable, row, column)) {
-            console.log( this.state.playerName + " Wins");
-            this.setState({ hasWinner : !this.state.hasWinner});
-        }
 
         this.setState({
             table: tempTable,
-            xIsNext : !this.state.xIsNext
+            xIsNext : !this.state.xIsNext,
+            myTurn: false,
+        });
+
+        socket.emit("sendTurn", {
+            table: this.state.table,
+            xIsNext: !this.state.xIsNext,
+            id: this.state.myId,
+            name: this.state.myName,
+            room: this.state.myRoom,
+            winner: calculateWinner(tempTable, row, column)? this.state.myName : null,
         });
 
     }
@@ -100,7 +143,9 @@ class Table extends Component{
 
         return(
             <div className = "Game-Table">
-                <div className = "Start-Sign" onClick = {() => this.gameStartClick()}> Start </div>
+                <div id = "Start-Sign" onClick = {() => this.gameStartClick()}> Start </div>
+                <div id = "Wait-Sign">Waiting for other player to ready up.</div>
+                <div id = "Win-Message">{this.state.winner + " Wins!"}</div>
                 {this.state.table.map((rElement, rIndex) => {
                     return(
                         <div className = "row">

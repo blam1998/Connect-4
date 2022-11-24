@@ -15,9 +15,11 @@ const io = new Server(server,{
     },
 })
 
-const myRooms = new Map();
+var myRooms = new Map();
+var waitingLobby = new Map();
 
 io.on("connection", (socket) => {
+
 
     socket.on("send_message", (data) => {
         if (!data.userName){
@@ -78,7 +80,40 @@ io.on("connection", (socket) => {
 
 
     socket.on("send_gameStart", (data) => {
-        
+        //data: id,room
+
+        //if room doesn't exist, add room and socket id.
+        if (!waitingLobby.get(data.room)){
+            waitingLobby.set(data.room, [socket.id]);
+        }
+
+        //if room exists AND socket id is already added, ignore.
+        else if (waitingLobby.get(data.room) && waitingLobby.get(data.room).indexOf(socket.id) > 0){
+            return;
+        }
+        //if room exists AND socket id is not yet added, add socket id to room.
+        else if (waitingLobby.get(data.room) && waitingLobby.get(data.room).indexOf(socket.id) < 0){
+            waitingLobby.get(data.room).push(socket.id);
+        }
+
+        if (waitingLobby.get(data.room).length == 2){
+            const randomVal = Math.random();
+            const player1 = waitingLobby.get(data.room)[0];
+            const player2 = waitingLobby.get(data.room)[1];
+            if (randomVal >= 0.50){
+                socket.in(data.room).emit("gameStart", player1)
+            }
+            else{
+                socket.in(data.room).emit("gameStart", player2)
+            }
+            return;
+        }
+
+        socket.emit("receive_gameStart");
+    });
+
+    socket.on("sendTurn", (data) => {
+        socket.in(data.room).emit("receiveTurn", data);
     });
 })
 

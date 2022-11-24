@@ -25,7 +25,15 @@ table{
     cursor: pointer;
 }
 
-.Start-Sign{
+#Start-Sign{
     border: 2px solid black;
     max-width: fit-content;
+}
+
+#Wait-Sign{
+    display: none;
+}
+
+#Win-Message{
+    display: none;
 }
