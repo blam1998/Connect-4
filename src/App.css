@@ -4,24 +4,39 @@
 }
 
 .Chat-Sidebar{
+  display: flex;
+  flex-direction: column;
   width: 100%;
   padding-bottom: 2em;
-  padding: 0 1em;
   overflow-y: none;
   background-color: rgba(0,0,0,0.4);
+  justify-content: center;
 }
 
 .Chat-Box{
   height:50vh;
   overflow: auto;
-  margin: 0;
-  width: 95%;
+  padding-left: 0.5em;
+  margin: 0 5%;
+  width: 90%;
   background-color: white;
 }
 
 .Chat-Title{
+  margin: 0 5%;
   text-align: left;
   margin-bottom: 0px;
+}
+
+.Lobby-Box{
+  display: flex;
+  flex-direction: column;
+  float: left;
+  margin: 0 5%;
+}
+
+.Lobby-Name{
+  text-align: left;
 }
 
 .Chat-Msg{
@@ -30,9 +45,10 @@
 }
 
 .Chat-Query-Box{
+  margin-left: 5%;
   display: flex;
-  padding-top: 0.25em;
-  width: 95%;
+  padding-top: 0.5em;
+  width: 90%;
   justify-content: space-between;
 }
 
@@ -41,5 +57,7 @@
 }
 
 .Msg-Button{
+  float: right;
   height: 25px;
+  width: 15%;
 }

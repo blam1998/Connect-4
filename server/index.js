@@ -17,6 +17,7 @@ const io = new Server(server,{
 
 var myRooms = new Map();
 var waitingLobby = new Map();
+var nameMap = new Map();
 
 io.on("connection", (socket) => {
 
@@ -61,17 +62,26 @@ io.on("connection", (socket) => {
             myRooms.set(room,[socket.id]);
         }
 
-        socket.join(room);
+        const playerSocket1 = myRooms.get(room) ? myRooms.get(room)[0] : null;
+        const playerSocket2 = myRooms.get(room) ? myRooms.get(room)[1] : null;
+        const playerName1 = playerSocket1 ? nameMap.get(playerSocket1) : null;
+        const playerName2 = playerSocket2 ? nameMap.get(playerSocket2) : null;
 
+        var nameArray = [playerName1, playerName2]
+        socket.join(room);
+        socket.in(room).emit("room_info", {roomInfo : nameArray})
         socket.emit("clear_chat");
-        socket.emit("receive_room", {room})
+        socket.emit("receive_room", data)
     })
 
     socket.on("send_userName", (data) => {
         const id = socket.id;
         const name = data.userName;
-        console.log(name);
+
+        nameMap.set(id, name);
+
         socket.emit("receive_userName", {name, id})
+        socket.emit("update_name", {id: socket.id, name: data.userName})
     })
 
     socket.on("send_leaveRoom", (data) => {

@@ -39,7 +39,16 @@ class Table extends Component{
         });
 
         socket.on("receive_room", (data) => {
-            this.setState({myRoom : data.room})
+            this.setState({
+                myRoom : data.room,
+                winner: null,
+                xIsNext: true,
+                myTurn: false,
+                table: Array.from(Array(6), () => new Array(7).fill(null)),
+            })
+
+            document.getElementById("Start-Sign").style.display = "block";
+            document.getElementById("Win-Message").style.display = "none";
         });
 
         socket.on("receive_gameStart", () => {

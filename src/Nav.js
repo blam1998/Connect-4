@@ -10,7 +10,7 @@ function Nav(){
 
 
     const sendRoom = () => {
-        socket.emit("send_room", {room});
+        socket.emit("send_room", {name: userName, room});
     }
 
     useEffect(() => {
