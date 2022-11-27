@@ -24,6 +24,7 @@ function Nav(){
 
         socket.on("receive_room", (data) => {
             setRoomId(data.room);
+            
           });
 
     }, [socket])

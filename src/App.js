@@ -1,6 +1,6 @@
 import './App.css';
 import io from 'socket.io-client';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 const socket = io.connect("http://localhost:3001");
 
 
@@ -9,7 +9,7 @@ let msgId = 0;
 function App() {
   const [message, setMessage] = useState([""]);
   const [messageReceived, SetMessageReceived] = useState([]);
-  const [currLobby, SetCurrLobby] = useState([]);
+  const [currLobby, SetCurrLobby] = useState([]); //map {id : name}
   const [room, SetRoom] = useState("");
   const [userName, setUserName] = useState("?");
   const [userId, SetUserId] = useState("");
@@ -32,23 +32,41 @@ function App() {
     });
 
     socket.on("update_name", (data) => {
-      if (data.id !== userId){
-        return;
-      }
-
-
-
+      //id, name
+      //currLobby.set(data.id, data.name);
+      socket.emit("update_nameSync", {newName : data.name, id : data.id, room: room});
     });
 
     socket.on("receive_room", (data) => {
-      SetRoom(data.room);
+      SetRoom(room => data.room);
+      console.log(data.room, room);
+
+      SetMessageReceived(messageReceived => 
+        [
+          ...messageReceived,
+          {name: "", id: msgId++, message: data.name + " has joined the room."}
+      ]);
 
     });
 
     socket.on("room_info", (data) => {
-      SetCurrLobby(
-        currLobby => data.roomInfo,
-      )
+      const id = data.id;
+      const newMap = new Map([[id, data.name]])
+
+      data.map((element,index) => {
+
+        if (document.getElementById(element[0] || !element)){
+          return;
+        }
+        var newName = document.createElement("div");
+        var text = document.createTextNode(element[1]);
+        newName.appendChild(text);
+        newName.setAttribute("class", "Lobby-Name");
+        newName.setAttribute("id", element[0]);
+        document.getElementsByClassName("Lobby-Box")[0].appendChild(newName);
+
+      });
+
     });
 
     socket.on("enter_name", () => {
@@ -61,20 +79,22 @@ function App() {
 
   }, [socket])
 
+
   useEffect(() => {
-    const last = currLobby[currLobby.length - 1];
-    SetMessageReceived(messageReceived => 
-      [
-        ...messageReceived,
-        {name: "", id: msgId++, message: last + " has joined the room."}
-    ]);
-  }, [currLobby]);
+    socket.on("receive_update_nameSync", (data) => {
+      //newName, id, room
+      console.log(data)
+      console.log(data.id);
+      const target = document.getElementById(data.id);
+      target.innerHTML = data.newName;
+    })
+  }, [room])
 
   return (
     <div className="App">
       <aside className = "Chat-Sidebar">
         <h1 className = "Chat-Title">Room {room}</h1>
-        <div className = "Lobby-Box"> {currLobby.map((element,index) => (<div id = {"lobby" + index} className = "Lobby-Name">{element}</div>))}</div>
+        <div className = "Lobby-Box"> {}</div>
         <div className = "Chat-Box">
           <div>
             {messageReceived.map(element => (<span key = {element.id} id = {element.id} className = "Chat-Msg"> {element.name + (element.name? ": " : "") + element.message} </span>))}

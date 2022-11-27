@@ -38,6 +38,7 @@ io.on("connection", (socket) => {
         var oldRoom = socket.rooms.values()
         oldRoom = oldRoom.next();
         const room = data.room;
+        const name = data.name;
 
 
         //If room is full, return error message and don't join room.
@@ -62,16 +63,27 @@ io.on("connection", (socket) => {
             myRooms.set(room,[socket.id]);
         }
 
-        const playerSocket1 = myRooms.get(room) ? myRooms.get(room)[0] : null;
-        const playerSocket2 = myRooms.get(room) ? myRooms.get(room)[1] : null;
-        const playerName1 = playerSocket1 ? nameMap.get(playerSocket1) : null;
-        const playerName2 = playerSocket2 ? nameMap.get(playerSocket2) : null;
+        const socket1 = myRooms.get(room)? myRooms.get(room)[0] : '';
+        const player1 = nameMap.get(socket1)? nameMap.get(socket1) : '';
+        const socket2 = myRooms.get(room)[1];
+        const player2 = nameMap.get(socket2);
 
-        var nameArray = [playerName1, playerName2]
+
+        var roomArray = null;
+
+        if (socket1 && socket2){
+            roomArray = [[socket1, player1], [socket2, player2]]
+        }
+        else{
+            roomArray = [[socket1, player1]]
+        }
+        
+
+        
         socket.join(room);
-        socket.in(room).emit("room_info", {roomInfo : nameArray})
         socket.emit("clear_chat");
-        socket.emit("receive_room", data)
+        socket.in(room).emit("room_info",  roomArray);
+        socket.emit("receive_room", data);
     })
 
     socket.on("send_userName", (data) => {
@@ -125,6 +137,12 @@ io.on("connection", (socket) => {
     socket.on("sendTurn", (data) => {
         socket.in(data.room).emit("receiveTurn", data);
     });
+
+    socket.on("update_nameSync", (data) => {
+        //newName, id, room
+        console.log(data);
+        socket.in(data.room).emit("receive_update_nameSync", data);
+    })
 })
 
 server.listen(3001, () => {
