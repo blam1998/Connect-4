@@ -14,12 +14,14 @@ function Squares(props){
 }
 
 class Table extends Component{
+    //table, myTurn, xIsNext, inProgress, winner => important!! must change every game.
     constructor(props){
         super(props);
         this.state = {
             table : Array.from(Array(6), () => new Array(7).fill(null)),
             myTurn: false,
             xIsNext: true,
+            inProgress: false,
             myName: "",
             myId: "",
             myRoom: "",
@@ -48,6 +50,7 @@ class Table extends Component{
             })
 
             document.getElementById("Start-Sign").style.display = "block";
+            document.getElementById("Start-Sign").innerHTML = "Start Game";
             document.getElementById("Win-Message").style.display = "none";
         });
 
@@ -59,12 +62,31 @@ class Table extends Component{
             document.getElementById("Wait-Sign").style.display = "none";
             document.getElementById("Start-Sign").style.display = "none";
 
+            //Chosen player gets to change their turn state.
             if (this.state.myId === playerId){
                 this.setState({
                     myTurn: !this.state.myTurn,
                 });
             }
+
+            //changes everyone's game state.
+            this.setState({
+                inProgress: true
+            });
         });
+
+        socket.on("leave_oldRoom", (data) => {
+            //To-do
+            if (this.state.inProgress){
+                alert(this.state.myName + " Wins!");
+            }
+
+            this.setState({
+                inProgress: false,
+            })
+
+            document.getElementById("Start-Sign").innerHTML = "Start Game";
+        })
 
         socket.on("receiveTurn", (data) => {
             /*
@@ -81,6 +103,8 @@ class Table extends Component{
 
            if (data.winner !== null){
                 document.getElementById("Win-Message").style.display = "block";
+                document.getElementById("Start-Sign").innerHTML = "Play Again";
+                document.getElementById("Start-Sign").style.display = "block";
            }
 
             this.setState({
@@ -93,12 +117,14 @@ class Table extends Component{
     }
 
     gameStartClick(){
+        //table, myTurn, xIsNext, inProgress, winner => important!! must change every game.
         const id = this.state.myId;
         const room = this.state.myRoom;
+        document.getElementById("Win-Message").style.display = "none";
 
         this.setState({
             myTurn: false,
-            hasWinner: false,
+            winner: "",
             table : Array.from(Array(6), () => new Array(7).fill(null)),
             xIsNext: true,
         })

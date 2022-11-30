@@ -29,7 +29,6 @@ io.on("connection", (socket) => {
             return;
         }
 
-        console.log(data.room);
         
         socket.in(data.room).emit("receive_message", data); //to everyone in room
         //socket.emit("receive_message", data); //to self
@@ -40,6 +39,11 @@ io.on("connection", (socket) => {
         oldRoom = oldRoom.next();
         const room = data.room;
         const name = data.name;
+
+        if (!data.name){
+            socket.emit("enter_name");
+            return;
+        }
 
         //If room is full, return error message and don't join room.
         if(myRooms.get(room) && myRooms.get(room).length >= 2){
@@ -87,9 +91,7 @@ io.on("connection", (socket) => {
         console.log("New Room: ", roomArray);
         
 
-        
         socket.join(room);
-        console.log("new Room: ", myRooms.get(room));
         socket.emit("clear_chat");
         socket.in(room).emit("room_info",  roomArray);
         socket.in(room).emit("receive_room", data);
@@ -106,9 +108,6 @@ io.on("connection", (socket) => {
         socket.in(room).emit("update_name", {id: socket.id, name: data.userName})
     })
 
-    socket.on("send_leaveRoom", (data) => {
-        socket.leave(data.room);
-    });
 
 
     socket.on("send_gameStart", (data) => {
@@ -128,6 +127,7 @@ io.on("connection", (socket) => {
             waitingLobby.get(data.room).push(socket.id);
         }
 
+        socket.emit("receive_gameStart");
         if (waitingLobby.get(data.room).length == 2){
             const randomVal = Math.random();
             const player1 = waitingLobby.get(data.room)[0];
@@ -138,10 +138,10 @@ io.on("connection", (socket) => {
             else{
                 socket.in(data.room).emit("gameStart", player2)
             }
-            return;
+
+            waitingLobby.get(data.room).length = 0;
         }
 
-        socket.emit("receive_gameStart");
     });
 
     socket.on("sendTurn", (data) => {

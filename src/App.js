@@ -41,7 +41,6 @@ function App() {
 
     socket.on("receive_room", (data) => {
       SetRoom(room => data.room);
-      console.log(data.room, room);
 
       SetMessageReceived(messageReceived => 
         [
@@ -82,7 +81,6 @@ function App() {
       let parent = document.getElementsByClassName("Lobby-Box")[0];
 
       for (var i = 0; i < parent.children.length; i++){
-        console.log(parent.children[i]);
         parent.removeChild(parent.children[i]);
       }
 
