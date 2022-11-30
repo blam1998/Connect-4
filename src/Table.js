@@ -2,14 +2,34 @@ import './Table.css';
 import {Component} from 'react';
 import { socket } from './App';
 import { useEffect, useState } from 'react';
+import { isVisible } from '@testing-library/user-event/dist/utils';
 const io = require('socket.io-client');
 
 
 function Squares(props){
+    const value = props.value;
+    const chooseColor = (color) => {
+        if (color === "X"){
+            return "blue";
+        }
+        else if (color === "O"){
+            return "red";
+        }
+    }
+
+    const currDisplay = (value) => {
+        if (value === null){
+            return "none";
+        }
+        else{
+            return "block";
+        }
+    }
+
     return(
-        <div className = "square" onClick = {props.handleClick}>
-            {props.value}
-        </div>
+        <svg className = "square" onClick = {props.handleClick}>
+            <circle className = "square-fill" fill = {chooseColor(props.value)} display = {currDisplay(props.value)}></circle>
+        </svg>
     )
 }
 

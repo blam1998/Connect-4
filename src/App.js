@@ -16,6 +16,7 @@ function App() {
 
   const sendMessage = () => {
     socket.emit("send_message", {userName, message, room})
+    document.getElementsByClassName("Type-Msg")[0].value = "";
   };
 
   useEffect(() => {
@@ -117,6 +118,11 @@ function App() {
         <div className = "Chat-Query-Box">
           <input placeholder = "Message..." className = "Type-Msg" onChange = {(event) => {
             setMessage(event.target.value);
+          }} onKeyPress = {(event) => {
+            if (event.code === "Enter"){
+              socket.emit("send_message", {userName, message, room});
+              document.getElementsByClassName("Type-Msg")[0].value = "";
+            }
           }}></input>
           <button onClick = {sendMessage} className = "Msg-Button">Send</button>
         </div>

@@ -22,6 +22,12 @@
   background-color: white;
 }
 
+@media (pointer:none), (pointer:coarse) {
+  .Chat-Sidebar{
+    display: none;
+  }
+}
+
 .Chat-Title{
   margin: 0 5%;
   text-align: left;
