@@ -34,7 +34,9 @@ function App() {
     socket.on("update_name", (data) => {
       //id, name
       //currLobby.set(data.id, data.name);
-      socket.emit("update_nameSync", {newName : data.name, id : data.id, room: room});
+      const target = document.getElementById(data.id);
+      target.innerHTML = data.name;
+      
     });
 
     socket.on("receive_room", (data) => {
@@ -55,9 +57,10 @@ function App() {
 
       data.map((element,index) => {
 
-        if (document.getElementById(element[0] || !element)){
+        if (document.getElementById(element[0]) || !element){
           return;
         }
+
         var newName = document.createElement("div");
         var text = document.createTextNode(element[1]);
         newName.appendChild(text);
@@ -75,20 +78,33 @@ function App() {
 
     socket.on("clear_chat", () => {
       SetMessageReceived(messageReceive => []);
+
+      let parent = document.getElementsByClassName("Lobby-Box")[0];
+
+      for (var i = 0; i < parent.children.length; i++){
+        console.log(parent.children[i]);
+        parent.removeChild(parent.children[i]);
+      }
+
+    });
+
+    socket.on("leave_oldRoom", (data) => {
+      //id, name
+      let node = document.getElementById(data.id);
+      if (node.parentNode){
+        node.parentNode.removeChild(node);
+      }
+
+      SetMessageReceived(messageReceived => 
+        [
+          ...messageReceived,
+          {name: "", id: msgId++, message: data.name + " has left the room."}
+      ]);
+      
+
     });
 
   }, [socket])
-
-
-  useEffect(() => {
-    socket.on("receive_update_nameSync", (data) => {
-      //newName, id, room
-      console.log(data)
-      console.log(data.id);
-      const target = document.getElementById(data.id);
-      target.innerHTML = data.newName;
-    })
-  }, [room])
 
   return (
     <div className="App">

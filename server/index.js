@@ -18,6 +18,7 @@ const io = new Server(server,{
 var myRooms = new Map();
 var waitingLobby = new Map();
 var nameMap = new Map();
+var idRoomMap = new Map();
 
 io.on("connection", (socket) => {
 
@@ -40,19 +41,22 @@ io.on("connection", (socket) => {
         const room = data.room;
         const name = data.name;
 
-
         //If room is full, return error message and don't join room.
         if(myRooms.get(room) && myRooms.get(room).length >= 2){
             socket.emit("room_full", {room});
             return;
         }
 
+        idRoomMap.set(socket.id,room);
+
         //Leave old room before you join another room. each socket can be in 1 room at a time.
         if (myRooms.get(oldRoom.value) && myRooms.get(oldRoom.value).indexOf(socket.id) > -1){
             myRooms.get(oldRoom.value).splice(myRooms.get(oldRoom.value).indexOf(socket.id),1);
         }
 
+        console.log(oldRoom.value);
         socket.leave(oldRoom.value);
+        socket.in(oldRoom.value).emit("leave_oldRoom", {id: socket.id, name: nameMap.get(socket.id)});
 
         //Joining a new room by adding their socket ID to their room number.
         // If myRoom already exists but my socket id is not in there, and the room isn't full. add my socket ID to that room.
@@ -62,6 +66,8 @@ io.on("connection", (socket) => {
         else{
             myRooms.set(room,[socket.id]);
         }
+
+
 
         const socket1 = myRooms.get(room)? myRooms.get(room)[0] : '';
         const player1 = nameMap.get(socket1)? nameMap.get(socket1) : '';
@@ -77,23 +83,27 @@ io.on("connection", (socket) => {
         else{
             roomArray = [[socket1, player1]]
         }
+
+        console.log("New Room: ", roomArray);
         
 
         
         socket.join(room);
+        console.log("new Room: ", myRooms.get(room));
         socket.emit("clear_chat");
         socket.in(room).emit("room_info",  roomArray);
-        socket.emit("receive_room", data);
+        socket.in(room).emit("receive_room", data);
     })
 
     socket.on("send_userName", (data) => {
         const id = socket.id;
         const name = data.userName;
+        const room = idRoomMap.get(socket.id);
 
         nameMap.set(id, name);
 
         socket.emit("receive_userName", {name, id})
-        socket.emit("update_name", {id: socket.id, name: data.userName})
+        socket.in(room).emit("update_name", {id: socket.id, name: data.userName})
     })
 
     socket.on("send_leaveRoom", (data) => {
