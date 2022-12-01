@@ -141,6 +141,7 @@ io.on("connection", (socket) => {
         //if room exists AND socket id is not yet added, add socket id to room.
         else if (waitingLobby.get(data.room) && waitingLobby.get(data.room).indexOf(socket.id) < 0){
             waitingLobby.get(data.room).push(socket.id);
+            socket.in(data.room).emit("playerReady", {id: socket.id})
         }
 
         socket.emit("receive_gameStart");

@@ -4,15 +4,55 @@ import { useEffect, useState } from 'react';
 import { socket } from './App';
 
 
-function Nav(){
-    const [userName, setUserName] = useState("");
-    const [room, setRoomId] = useState("");
+function useCustomHook(){
+    const [id, SetId] = useState("");
+    const [player2, setPlayer2] = useState("");
+    const [myTimer, setMyTimer] = useState("");
+    const [playerTimer, setPlayerTimer] = useState("");
 
+
+    useEffect(() => {
+        socket.on("receive_userName", (data) => {
+            SetId(data.id);
+        });
+
+    }, [socket])
+
+    useEffect(() => {
+        socket.on("update_name", (data) => {
+            //name, id
+            if (id && id !== data.id){
+                setPlayer2(player2 => data.name);
+            }
+        });
+
+        socket.on("room_info", (data) => {
+            //[[socket,name]...]
+
+            data.map((element) => {
+                if (id && element[0] !== id){
+                    setPlayer2(player2 => element[1]);
+                }
+            })
+        });
+    });
+
+
+    return [id, player2];
+}
+
+
+function Nav(){
+    var name = null;
+    const [navId, player2] = useCustomHook();
+    const [room, setRoomId] = useState("");
+    const [userName, setUserName] = useState("");
 
     const sendRoom = () => {
         socket.emit("send_room", {name: userName, room});
     }
 
+    
     useEffect(() => {
         socket.emit("send_userName", {userName});
     },[userName])
@@ -24,19 +64,28 @@ function Nav(){
 
         socket.on("receive_room", (data) => {
             setRoomId(data.room);
-            
-          });
+        });
+
+        socket.on("leave_oldRoom", (data) => {
+        });
+
+        socket.on("receive_userName", (data) => {
+            setUserName(userName => data.name);
+        })
+
 
     }, [socket])
 
     return(
         <div className = "Navbar">
-            <h1 className = "Navbar-Name">{userName}</h1>
+            <div className = "Navbar-NameDiv">
+                <h1 className = "Name">{userName + (player2? ("  vs  " + player2) : "")} </h1>
+            </div>
             <div className = "User-Info">
                 <div className = "Name-Input">
                     <input placeholder = "Player Name..." id = "UserName"></input>
                     <button onClick = {() => {
-                        let name = document.getElementById("UserName").value;
+                        name = document.getElementById("UserName").value;
                         setUserName(name);
                         }}>Send</button>
                 </div>

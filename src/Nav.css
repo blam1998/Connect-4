@@ -11,4 +11,11 @@
     margin:0 auto;
 }
 
+.Navbar-NameDiv{
+    display: flex;
+}
+
+.Name-Divider{
+    padding: 0 0.5em;
+}
 
