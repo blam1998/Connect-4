@@ -7,13 +7,15 @@ import { socket } from './App';
 function useCustomHook(){
     const [id, SetId] = useState("");
     const [player2, setPlayer2] = useState("");
-    const [myTimer, setMyTimer] = useState("");
-    const [playerTimer, setPlayerTimer] = useState("");
 
 
     useEffect(() => {
         socket.on("receive_userName", (data) => {
             SetId(data.id);
+        });
+
+        socket.on("gameStart", (data) => {
+            document.getElementsByClassName("Ready-Check")[0].style.display = "none";
         });
 
     }, [socket])
@@ -34,6 +36,19 @@ function useCustomHook(){
                     setPlayer2(player2 => element[1]);
                 }
             })
+        });
+
+        socket.on("readyCheck", (data) => {
+            //You're ready.
+            const element = document.getElementsByClassName("Ready-Check")[0];
+            const target = document.getElementsByClassName("Name")[0];
+            document.getElementsByClassName("Ready-Check")[0].style.display = "block";
+            if (id && data.id === id){
+                target.before(element);
+            }
+            else{
+                target.after(element);
+            }
         });
     });
 
@@ -79,6 +94,7 @@ function Nav(){
     return(
         <div className = "Navbar">
             <div className = "Navbar-NameDiv">
+                <div className = "Ready-Check">{"[Ready]"}</div>
                 <h1 className = "Name">{userName + (player2? ("  vs  " + player2) : "")} </h1>
             </div>
             <div className = "User-Info">
