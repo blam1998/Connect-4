@@ -106,6 +106,10 @@ class Table extends Component{
             })
 
             document.getElementById("Start-Sign").innerHTML = "Start Game";
+
+            if (document.getElementById("Wait-Sign").style.display === "block"){
+                document.getElementById("Start-Sign").style.display = "none";
+            }
         })
 
         socket.on("receiveTurn", (data) => {
@@ -201,16 +205,17 @@ class Table extends Component{
                 <div id = "Start-Sign" onClick = {() => this.gameStartClick()}> Start </div>
                 <div id = "Wait-Sign">Waiting for other player to ready up.</div>
                 <div id = "Win-Message">{this.state.winner + " Wins!"}</div>
-                {this.state.table.map((rElement, rIndex) => {
-                    return(
-                        <div className = "row">
-                            {rElement.map((cElement,cIndex) =>{
-                                return(this.renderSquare(rIndex, cIndex));
-                            })}
-                        </div>
-                    )
-                })}
-
+                <div>
+                    {this.state.table.map((rElement, rIndex) => {
+                        return(
+                            <div className = "row">
+                                {rElement.map((cElement,cIndex) =>{
+                                    return(this.renderSquare(rIndex, cIndex));
+                                })}
+                            </div>
+                        )
+                    })}
+                </div>
             </div>
         )
     }

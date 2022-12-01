@@ -15,10 +15,10 @@ const io = new Server(server,{
     },
 })
 
-var myRooms = new Map();
-var waitingLobby = new Map();
-var nameMap = new Map();
-var idRoomMap = new Map();
+var myRooms = new Map(); //[[id1, id2]...]
+var waitingLobby = new Map(); //[[id1, id2]...]
+var nameMap = new Map(); //socket : id
+var idRoomMap = new Map(); //id : room
 
 io.on("connection", (socket) => {
 
@@ -32,6 +32,24 @@ io.on("connection", (socket) => {
         
         socket.in(data.room).emit("receive_message", data); //to everyone in room
         //socket.emit("receive_message", data); //to self
+    });
+
+    socket.on("disconnect", () => {
+        const room = idRoomMap.get(socket.id);
+
+        socket.in(room).emit("leave_oldRoom", {id: socket.id, name: nameMap.get(socket.id)});
+
+        if (myRooms.get(room) && myRooms.get(room).indexOf(socket.id) >= 0){
+            myRooms.get(room).splice(myRooms.get(room).indexOf(socket.id),1);
+        }
+
+        if (waitingLobby.get(room) && waitingLobby.get(room).indexOf(socket.id) >= 0){
+            waitingLobby.get(room).splice(waitingLobby.get(room).indexOf(socket.id));
+        }
+
+        //Start deleting process
+        nameMap.delete(socket.id);
+        idRoomMap.delete(socket.id);
     });
 
     socket.on("send_room", (data) => {
@@ -58,7 +76,6 @@ io.on("connection", (socket) => {
             myRooms.get(oldRoom.value).splice(myRooms.get(oldRoom.value).indexOf(socket.id),1);
         }
 
-        console.log(oldRoom.value);
         socket.leave(oldRoom.value);
         socket.in(oldRoom.value).emit("leave_oldRoom", {id: socket.id, name: nameMap.get(socket.id)});
 
@@ -88,7 +105,6 @@ io.on("connection", (socket) => {
             roomArray = [[socket1, player1]]
         }
 
-        console.log("New Room: ", roomArray);
         
 
         socket.join(room);
@@ -119,7 +135,7 @@ io.on("connection", (socket) => {
         }
 
         //if room exists AND socket id is already added, ignore.
-        else if (waitingLobby.get(data.room) && waitingLobby.get(data.room).indexOf(socket.id) > 0){
+        else if (waitingLobby.get(data.room) && waitingLobby.get(data.room).indexOf(socket.id) >= 0){
             return;
         }
         //if room exists AND socket id is not yet added, add socket id to room.
@@ -150,7 +166,6 @@ io.on("connection", (socket) => {
 
     socket.on("update_nameSync", (data) => {
         //newName, id, room
-        console.log(data);
         socket.in(data.room).emit("receive_update_nameSync", data);
     })
 })
