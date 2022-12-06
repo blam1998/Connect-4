@@ -15,21 +15,17 @@ function Squares(props){
         else if (color === "O"){
             return "red";
         }
-    }
-
-    const currDisplay = (value) => {
-        if (value === null){
-            return "none";
-        }
-        else{
-            return "block";
+        else if (color === null){
+            return "white";
         }
     }
 
     return(
-        <svg className = "square" onClick = {props.handleClick}>
-            <circle className = "square-fill" fill = {chooseColor(props.value)} display = {currDisplay(props.value)}></circle>
-        </svg>
+        <div className = "Square-Div">
+            <svg className = "square" onClick = {props.handleClick} viewBox = "0 0 100 100">
+                <circle className = "square-fill" fill = {chooseColor(props.value)} ></circle>
+            </svg>
+        </div>
     )
 }
 
@@ -205,7 +201,7 @@ class Table extends Component{
                 <div id = "Start-Sign" onClick = {() => this.gameStartClick()}> Start </div>
                 <div id = "Wait-Sign">Waiting for other player to ready up.</div>
                 <div id = "Win-Message">{this.state.winner + " Wins!"}</div>
-                <div>
+                <div id = "table">
                     {this.state.table.map((rElement, rIndex) => {
                         return(
                             <div className = "row">

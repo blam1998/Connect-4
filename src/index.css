@@ -23,17 +23,32 @@ code {
   justify-content:space-between;
 }
 
+.Player-State{
+  width: 30%;
+  height: 100%;
+}
+
 
 .Table{
-  width: 70%;
-  height: 100%;
+  width: 40%;
+  height: 700px;
   align-items: center;
   justify-content: center;
   display: flex;
 }
 
 .Chat-Room{
-  width: 20%;
+  width: 25%;
   align-items: bottom;
   justify-content: right;
+}
+
+@media (pointer:none), (pointer:coarse) {
+  .Table{
+    width: fit-content;
+    height: 700px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+  }
 }

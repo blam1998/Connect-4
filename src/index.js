@@ -14,6 +14,9 @@ root.render(
     </div>
     
     <div className = "Main-Interface">
+      <div className = "Player-State">
+        
+      </div>
       <div className = "Table">
         <Table />
       </div>

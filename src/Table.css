@@ -1,6 +1,5 @@
-table{
+#table{
     width: 100%;
-    padding-left: 2em;
 }
 
 .Game-Table{
@@ -17,13 +16,10 @@ table{
     display: flex;
 }
 
-.square{
-    width: 5em;
-    height: 5em;
-    background-image: url('../public/slot.png');
-    background-size:contain;
-    text-align: center;
-    z-index: 1;
+.Square-Div{
+    width: calc(100%/7);
+    height: auto;
+    background-color: lightgrey;
 }
 
 .square-fill{
@@ -56,3 +52,14 @@ table{
     display: none;
     margin-bottom: 2%;
 }
+
+@media (pointer:none), (pointer:coarse) {
+    .square{
+        width: 5rem;
+        height: 5rem;
+        background-image: url('../public/slot.png');
+        background-size:contain;
+        text-align: center;
+        z-index: 1;
+    }
+  }
