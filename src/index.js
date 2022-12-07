@@ -5,6 +5,7 @@ import {App} from './App';
 import reportWebVitals from './reportWebVitals';
 import {Table} from './Table';
 import {Nav} from './Nav';
+import Playerstate from './Playerstate';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -15,7 +16,7 @@ root.render(
     
     <div className = "Main-Interface">
       <div className = "Player-State">
-        
+        <Playerstate />
       </div>
       <div className = "Table">
         <Table />

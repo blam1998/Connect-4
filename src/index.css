@@ -39,16 +39,30 @@ code {
 
 .Chat-Room{
   width: 25%;
-  align-items: bottom;
-  justify-content: right;
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
 }
 
 @media (pointer:none), (pointer:coarse) {
+  .Main-Interface{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
   .Table{
-    width: fit-content;
-    height: 700px;
+    height: auto;
+    max-height: 700px;
     align-items: center;
     justify-content: center;
     display: flex;
+    width: 80%;
+  }
+
+  .Player-State{
+    width: 90%;
+    margin-bottom: 2rem;
   }
 }

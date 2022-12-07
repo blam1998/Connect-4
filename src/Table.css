@@ -57,9 +57,11 @@
     .square{
         width: 5rem;
         height: 5rem;
-        background-image: url('../public/slot.png');
-        background-size:contain;
-        text-align: center;
         z-index: 1;
     }
-  }
+
+    .Game-Table{
+        flex-direction: column-reverse;
+        justify-content: normal;
+    }
+}
