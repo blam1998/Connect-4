@@ -37,19 +37,6 @@ function useCustomHook(){
                 }
             })
         });
-
-        socket.on("readyCheck", (data) => {
-            //You're ready.
-            const element = document.getElementsByClassName("Ready-Check")[0];
-            const target = document.getElementsByClassName("Name")[0];
-            document.getElementsByClassName("Ready-Check")[0].style.display = "block";
-            if (id && data.id === id){
-                target.before(element);
-            }
-            else{
-                target.after(element);
-            }
-        });
     });
 
 

@@ -144,6 +144,7 @@ io.on("connection", (socket) => {
             
         }
 
+        socket.in(data.room).emit("readyCheck", {id: socket.id});
         socket.emit("receive_gameStart");
         if (waitingLobby.get(data.room).length == 2){
             const randomVal = Math.random();
@@ -158,9 +159,8 @@ io.on("connection", (socket) => {
 
             waitingLobby.get(data.room).length = 0;
         }
-        else{
-            socket.in(data.room).emit("readyCheck", {id: socket.id});
-        }
+        
+        
 
     });
 
