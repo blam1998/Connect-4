@@ -28,7 +28,29 @@ class Playerstate extends Component{
             })
         });
 
+        socket.on("playerID", (data) => {
+            //data = name, id, room
+            this.setState({
+                myId: data.id,
+                p1Name: data.name
+            })
+        });
+
+        socket.on("room_info", (data) => {
+            //data = [[socket1, player1]...]
+            data.map((element) => {
+                if (this.state.myId && element[0] !== this.state.myId){
+                    this.setState({
+                        p2Name: element[1],
+                    })
+                }
+            })
+        })
+
         socket.on("receiveTurn", (data) => {
+            if (!this.state.myId){
+                return;
+            }
             if (this.state.myId === data.id){
                 document.getElementById("player2").style.backgroundColor = "red";
                 document.getElementById("player1").style.backgroundColor = "white";
@@ -61,10 +83,12 @@ class Playerstate extends Component{
             //First turn ID.
             document.getElementById("player2").style.backgroundColor = "white";
             document.getElementById("player1").style.backgroundColor = "white";
-            if (this.state.myId && this.state.myId === data.id){
+            if (this.state.myId === data){
                 document.getElementById("player1").style.backgroundColor = "red";
             }
-            else if (this.state.myId && this.state.myId !== data.id){
+            if (this.state.myId !== data){
+                console.log(this.state.myId, data);
+                console.log("Hit");
                 document.getElementById("player2").style.backgroundColor = "red";
             }
         })

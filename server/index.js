@@ -111,6 +111,7 @@ io.on("connection", (socket) => {
         socket.emit("clear_chat");
         socket.in(room).emit("room_info",  roomArray);
         socket.in(room).emit("receive_room", data);
+        socket.emit("playerID", {name : data.name, id : socket.id, room : data.room})  //for playerState.js only.
     })
 
     socket.on("send_userName", (data) => {
