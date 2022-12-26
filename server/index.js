@@ -172,6 +172,17 @@ io.on("connection", (socket) => {
     socket.on("update_nameSync", (data) => {
         //newName, id, room
         socket.in(data.room).emit("receive_update_nameSync", data);
+    });
+
+    socket.on("timeOut", (data) => {
+        //id
+        var winner = null;
+        myRooms.get(idRoomMap.get(data.id)).map( (element) => {
+            if (element !== data.id){
+                winner = nameMap.get(element);
+            }
+        })
+        socket.in(idRoomMap.get(data.id)).emit("tableTimeOut", {id: data.id, winner: winner});
     })
 })
 

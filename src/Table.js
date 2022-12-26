@@ -134,6 +134,13 @@ class Table extends Component{
                 winner: data.winner,
             });
         });
+
+        socket.on("tableTimeOut", (data) => {
+            this.setState({winner: data.winner});
+            document.getElementById("Win-Message").style.display = "block";
+            document.getElementById("Start-Sign").innerHTML = "Play Again";
+            document.getElementById("Start-Sign").style.display = "block";
+        })
     }
 
     gameStartClick(){

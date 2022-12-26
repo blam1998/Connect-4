@@ -12,11 +12,31 @@ class Playerstate extends Component{
             myId: "",
             p1Name: "",
             p2Name: "",
-            p1Timer: "60s",
-            p2Timer: "60s",
+            p1Timer: 10000,
+            p2Timer: 10000,
+            timer: null,
         }
 
-        //this.handleTurn = this.handleTurn.bind(this);
+        this.handleTurn = this.handleTurn.bind(this);
+    }
+
+    handleTurn(player){
+        if (player === this.state.myId){
+            document.getElementById("player2-timer").innerHTML = (this.state.p2Timer/1000).toString() + " seconds";
+            this.setState({p2Timer : this.state.p2Timer - 1})
+            if (this.state.p2Timer === 1){
+                clearInterval(this.state.timer)
+            }
+        }
+        else{
+            document.getElementById("player1-timer").innerHTML = (this.state.p1Timer/1000).toString() + " seconds";
+            this.setState({p1Timer : this.state.p1Timer - 1})
+            if (this.state.p1Timer === 1){
+                clearInterval(this.state.timer)
+                socket.emit("timeOut", {id: this.state.myId})
+            }
+        }
+        
     }
 
     componentDidMount(){
@@ -48,16 +68,21 @@ class Playerstate extends Component{
         })
 
         socket.on("receiveTurn", (data) => {
+            clearInterval(this.state.timer);
+            this.setState({timer : null});
+
             if (!this.state.myId){
                 return;
             }
             if (this.state.myId === data.id){
                 document.getElementById("player2").style.backgroundColor = "red";
                 document.getElementById("player1").style.backgroundColor = "white";
+                this.setState({timer : setInterval(() => this.handleTurn(data.id), 1000)})
            }
            else{
                 document.getElementById("player1").style.backgroundColor = "red";
                 document.getElementById("player2").style.backgroundColor = "white";
+                this.setState({timer : setInterval(() => this.handleTurn(data.id), 1000)})
            }
         });
 
@@ -81,35 +106,32 @@ class Playerstate extends Component{
 
         socket.on("gameStart", (data) => {
             //First turn ID.
+
+            this.setState(
+                {p1Timer: 10,
+                p2Timer: 10})
             document.getElementById("player2").style.backgroundColor = "white";
             document.getElementById("player1").style.backgroundColor = "white";
             if (this.state.myId === data){
                 document.getElementById("player1").style.backgroundColor = "red";
             }
             if (this.state.myId !== data){
-                console.log(this.state.myId, data);
-                console.log("Hit");
                 document.getElementById("player2").style.backgroundColor = "red";
             }
         })
-    }
-
-    handleTurn(){
-
     }
     
 
     render(){
         return(
             <div className = "Playerstate-Outer-Frame">
-                {this.handleTurn()}
                 <div id = "player1" className = "Playerstate">
                     <div>{this.state.p1Name? this.state.p1Name : ""}</div>
-                    <div>{this.state.p1Timer}</div>
+                    <div id = "player1-timer">{this.state.p1Name? this.state.p1Timer  + " seconds": ""}</div>
                 </div>
                 <div id = "player2" className = "Playerstate">
                     <div>{this.state.p2Name? this.state.p2Name : ""}</div>
-                    <div>{this.state.p1Timer}</div>
+                    <div id = "player2-timer">{this.state.p2Name? this.state.p2Timer + " seconds" : ""}</div>
 
                 </div>
             </div>
