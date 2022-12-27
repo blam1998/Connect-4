@@ -183,6 +183,10 @@ io.on("connection", (socket) => {
             }
         })
         socket.in(idRoomMap.get(data.id)).emit("tableTimeOut", {id: data.id, winner: winner});
+    });
+
+    socket.on("connect4", (data) => {
+        socket.in(data.room).emit("stopTimer");
     })
 })
 

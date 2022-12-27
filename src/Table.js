@@ -125,6 +125,7 @@ class Table extends Component{
                 document.getElementById("Win-Message").style.display = "block";
                 document.getElementById("Start-Sign").innerHTML = "Play Again";
                 document.getElementById("Start-Sign").style.display = "block";
+                socket.emit("connect4", {room: this.state.myRoom});
            }
 
             this.setState({
